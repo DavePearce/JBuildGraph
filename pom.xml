@@ -47,6 +47,11 @@ A library for implementing builds (e.g. for use within compilers).
   
   <dependencies>
     <dependency>
+      <groupId>org.whiley</groupId>
+      <artifactId>jbuildstore</artifactId>
+      <version>0.1.0</version>
+    </dependency>    
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>5.7.0</version>

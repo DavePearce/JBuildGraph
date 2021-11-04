@@ -15,7 +15,7 @@ package jbuildgraph.core;
 
 import java.util.List;
 import java.util.function.Function;
-
+import jbuildstore.core.Content;
 import jbuildgraph.util.Pair;
 import jbuildgraph.util.Trie;
 
@@ -28,7 +28,7 @@ public interface Build {
 	 * @author David J. Pearce
 	 *
 	 */
-	public interface Repository extends Content.Ledger {
+	public interface Repository extends Content.Ledger<Trie,Build.Artifact> {
 		/**
 		 * Apply a given transaction to this repository. This will be given the latest
 		 * snapshot when it is executed. The resulting snapshot well then become the
@@ -56,10 +56,10 @@ public interface Build {
 		public SnapShot last();
 
 		@Override
-		public <T extends Content> T get(Content.Type<T> kind, Trie p);
+		public <T extends Build.Artifact> T get(Content.Type<T> kind, Trie p);
 
 		@Override
-		public <T extends Content> List<T> getAll(Content.Filter<T> filter);
+		public <T extends Build.Artifact> List<T> getAll(Content.Filter<Trie, T> filter);
 	}
 
 	/**
@@ -67,12 +67,12 @@ public interface Build {
 	 *
 	 * @param <S>
 	 */
-	public interface SnapShot extends Content.Source, Iterable<Build.Artifact> {
+	public interface SnapShot extends Content.Source<Trie,Build.Artifact>, Iterable<Build.Artifact> {
 		@Override
-		public <T extends Content> T get(Content.Type<T> kind, Trie p);
+		public <T extends Build.Artifact> T get(Content.Type<T> kind, Trie p);
 
 		@Override
-		public <T extends Content> List<T> getAll(Content.Filter<T> filter);
+		public <T extends Build.Artifact> List<T> getAll(Content.Filter<Trie, T> filter);
 
 		/**
 		 * Write a specific artifact to this snapshot, thereby producing a new snapshot.
