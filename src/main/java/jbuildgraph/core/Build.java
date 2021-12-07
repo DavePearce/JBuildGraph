@@ -14,91 +14,28 @@
 package jbuildgraph.core;
 
 import java.util.List;
-import java.util.function.Function;
 import jbuildstore.core.Content;
-import jbuildgraph.util.Pair;
 import jbuildgraph.util.Trie;
 
 public interface Build {
 
 	/**
-	 * Represents a versioned view of the "build", including all generated
-	 * artifacts.
+	 * Represents a factory for constructing build tasks (e.g. for compiling Whiley
+	 * files to WyIL files, etc).
 	 *
 	 * @author David J. Pearce
 	 *
 	 */
-	public interface Repository extends Content.Ledger<Trie,Build.Artifact> {
+	public interface Platform<T> {
 		/**
-		 * Apply a given transaction to this repository. This will be given the latest
-		 * snapshot when it is executed. The resulting snapshot well then become the
-		 * head (if no other snapshots have been written inbetween) or will be merged
-		 * (if possible).
+		 * Initialise a fresh task for building artifacts in a given context (i.e. where
+		 * we know what the configuration is, what the source files are, etc).
 		 *
-		 * @param transformer
-		 */
-		public boolean apply(Transaction transaction);
-
-		/**
-		 * Get the ith state within this repository
-		 *
-		 * @param i
-		 * @return
-		 */
-		@Override
-		public SnapShot get(int i);
-
-		/**
-		 * Get current state of the build system
+		 * @param context Necessary context for initialising the task.
 		 *
 		 * @return
 		 */
-		public SnapShot last();
-
-		@Override
-		public <T extends Build.Artifact> T get(Content.Type<T> kind, Trie p);
-
-		@Override
-		public <T extends Build.Artifact> List<T> getAll(Content.Filter<Trie, T> filter);
-	}
-
-	/**
-	 * Represents a snapshot of the repository at a given point in time.
-	 *
-	 * @param <S>
-	 */
-	public interface SnapShot extends Content.Source<Trie,Build.Artifact>, Iterable<Build.Artifact> {
-		@Override
-		public <T extends Build.Artifact> T get(Content.Type<T> kind, Trie p);
-
-		@Override
-		public <T extends Build.Artifact> List<T> getAll(Content.Filter<Trie, T> filter);
-
-		/**
-		 * Write a specific artifact to this snapshot, thereby producing a new snapshot.
-		 *
-		 * @param entry
-		 * @param <T>
-		 * @return
-		 */
-		public <T extends Artifact> SnapShot put(T entry);
-	}
-
-	public interface Transaction extends Iterable<Task> {
-		/**
-		 * Returns the number of tasks in this transaction.
-		 *
-		 * @return
-		 */
-		public int size();
-
-		/**
-		 * Get the ith task in this transaction.
-		 *
-		 * @param ith
-		 * @return
-		 */
-		public Task get(int ith);
+		public Task initialise(T context);
 	}
 
 	/**
@@ -139,53 +76,29 @@ public interface Build {
 	 * @author David J. Pearce
 	 *
 	 */
-	public interface Task extends Artifact, Function<SnapShot, Pair<SnapShot, Boolean>> {
-	}
-
-	/**
-	 * Responsible for recording detailed progress of a given task for both
-	 * informational and profiling purposes. For example, providing feedback on
-	 * expected time to completion in an IDE. Or, providing detailed feedback on
-	 * number of steps executed by key components in a given task, etc.
-	 *
-	 * @author David J. Pearce
-	 */
-	public interface Meter {
+	public interface Task {
 		/**
-		 * Create subtask of current task with a given name.
+		 * The set of concrete build artifacts this task depends upon. This is assumed
+		 * to be statically known beforehand.
 		 *
 		 * @return
 		 */
-		public Meter fork(String name);
+		public List<Build.Artifact> requires();
 
 		/**
-		 * Record an arbitrary step taking during this subtask for profiling purposes.
+		 * The set of concrete build artifacts this task generates. Again, this is
+		 * assumed to be statically known beforehand.
 		 *
-		 * @param tag
+		 * @return
 		 */
-		public void step(String tag);
+		public List<Build.Artifact> ensures();
 
 		/**
-		 * Current (sub)task has completed.
+		 * Apply this task to a given repository.
+		 *
+		 * @param repository
+		 * @return
 		 */
-		public void done();
+		public boolean apply(Content.Ledger<Trie, Artifact> repository);
 	}
-
-	public static final Build.Meter NULL_METER = new Build.Meter() {
-
-		@Override
-		public Meter fork(String name) {
-			return NULL_METER;
-		}
-
-		@Override
-		public void step(String tag) {
-
-		}
-
-		@Override
-		public void done() {
-		}
-
-	};
 }
