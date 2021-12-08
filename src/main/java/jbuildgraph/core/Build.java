@@ -13,7 +13,6 @@
 // limitations under the License.
 package jbuildgraph.core;
 
-import java.util.List;
 import jbuildstore.core.Content;
 import jbuildgraph.util.Trie;
 
@@ -39,36 +38,6 @@ public interface Build {
 	}
 
 	/**
-	 * Represents a given "build artifact" within a repository. This could a
-	 * SourceFile, or some kind of structured syntax tree or intermediate
-	 * representation. It could also be a binary target.
-	 */
-	public interface Artifact extends Content {
-		/**
-		 * Get the location within the build of this artifact.
-		 *
-		 * @return
-		 */
-		public Trie getPath();
-
-		/**
-		 * Get the content type of this artifact.
-		 *
-		 * @return
-		 */
-		@Override
-		public Content.Type<? extends Artifact> getContentType();
-
-		/**
-		 * Get all the source artifacts that contributed to this artifact. Observe that,
-		 * if this is a source file, then this list is always empty!
-		 *
-		 * @return
-		 */
-		public List<? extends Build.Artifact> getSourceArtifacts();
-	}
-
-	/**
 	 * A shortlived unit of work responsible for generating a given build artifact
 	 * (e.g. converting one or more files of a given type into a given target file).
 	 * Tasks which are not dependent on each other may be scheduled in parallel.
@@ -83,6 +52,6 @@ public interface Build {
 		 * @param repository
 		 * @return
 		 */
-		public boolean apply(Content.Store<Trie, Artifact> repository);
+		public boolean apply(Content.Store<Trie, Content> repository);
 	}
 }
