@@ -7,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.whiley</groupId>
   <artifactId>jbuildgraph</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
 
   <licenses>
     <license>
@@ -49,7 +49,7 @@ A library for implementing builds (e.g. for use within compilers).
     <dependency>
       <groupId>org.whiley</groupId>
       <artifactId>jbuildstore</artifactId>
-      <version>0.1.1</version>
+      <version>0.1.2</version>
     </dependency>    
     <dependency>
       <groupId>org.junit.jupiter</groupId>

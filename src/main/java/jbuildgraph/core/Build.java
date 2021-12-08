@@ -78,27 +78,11 @@ public interface Build {
 	 */
 	public interface Task {
 		/**
-		 * The set of concrete build artifacts this task depends upon. This is assumed
-		 * to be statically known beforehand.
-		 *
-		 * @return
-		 */
-		public List<Build.Artifact> requires();
-
-		/**
-		 * The set of concrete build artifacts this task generates. Again, this is
-		 * assumed to be statically known beforehand.
-		 *
-		 * @return
-		 */
-		public List<Build.Artifact> ensures();
-
-		/**
 		 * Apply this task to a given repository.
 		 *
 		 * @param repository
 		 * @return
 		 */
-		public boolean apply(Content.Ledger<Trie, Artifact> repository);
+		public boolean apply(Content.Store<Trie, Artifact> repository);
 	}
 }
