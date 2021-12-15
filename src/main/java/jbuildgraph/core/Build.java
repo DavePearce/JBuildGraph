@@ -14,6 +14,7 @@
 package jbuildgraph.core;
 
 import jbuildstore.core.Content;
+import jbuildstore.core.Key;
 import jbuildgraph.util.Trie;
 
 public interface Build {
@@ -52,6 +53,6 @@ public interface Build {
 		 * @param repository
 		 * @return
 		 */
-		public boolean apply(Content.Store<Trie, Content> repository);
+		public boolean apply(Content.Store<Key<Trie, ?>> repository);
 	}
 }
